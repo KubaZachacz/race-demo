@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './App.css';
 import speedway from "./assets/speedway.svg";
 import { Player, Animation } from './animation/animation';
-import { getRandom } from './utils';
+import { colorArray, getRandom } from './utils';
 
 function App() {
   const [players, setPlayers] = useState([]);
@@ -20,19 +20,27 @@ function App() {
     const sprite = sourceSprite.cloneNode(true);
     sprite.id = `player_${players.length}`;
 
+    const motorColor = colorArray[getRandom(0, colorArray.length - 1)];
+    const motorcycle = sprite.querySelectorAll('.motorcycle')
+    motorcycle.forEach((el) => {
+      el.style.fill = motorColor;
+    })
+
+
+    const helmetColor = colorArray[getRandom(0, colorArray.length - 1)];
+    sprite.querySelector('.helmet').style.fill = helmetColor;
+
     svg.appendChild(sprite);
 
-    const player = new Player(sprite, track, viewBox);
+    const player = new Player(players.length, sprite, track, viewBox);
 
     const offset = {
       x: 25,
-      y: 30 * players.length
+      y: 10 + 30 * players.length
     }
 
-    const maxVelocity = getRandom(25, 50) / 10;
-    const acceleration = getRandom(4, 7) / 100;
-
-    console.log(maxVelocity, acceleration)
+    const maxVelocity = getRandom(40, 60) / 10;
+    const acceleration = getRandom(5, 6) / 100;
 
     player.prepare(offset, maxVelocity, acceleration);
 

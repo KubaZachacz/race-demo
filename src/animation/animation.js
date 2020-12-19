@@ -1,5 +1,6 @@
 export class Player {
-    constructor(sprite, track, viewBox) {
+    constructor(id, sprite, track, viewBox) {
+        this.id = id;
         this.sprite = sprite;
         this.track = track;
         this.lastTrackPoint = {
@@ -21,10 +22,11 @@ export class Player {
         this.velocity = 0;
         this.maxVelocity = 3;
         this.acceleration = 0.05;
-        this.collisionRadius = 0;
+        this.collisionRadius = 12;
         this.isDone = false;
         this.laps = 0;
         this.progress = 0;
+        this.isCollision = false;
     }
 
     prepare(offset, maxVelocity, acceleration) {
@@ -43,24 +45,29 @@ export class Player {
         this.yOffset = offset.y;
         this.xOffset = offset.x;
 
-        // const ox = this.yOffset * Math.sin(startRad) + this.xOffset * Math.cos(startRad),
-        //     oy = this.yOffset * Math.cos(startRad) - this.xOffset * Math.sin(startRad)
-
-        // this.position = {
-        //     x: this.trackPoint.x - ox,
-        //     y: this.trackPoint.y + oy,
-        // };
-
-        // this.rotation = -(180 - startRad * (180 / Math.PI));
-
         this.calculatePosition(Math.PI);
 
         this.transformPosition();
     }
 
     move() {
-        if (this.velocity < this.maxVelocity) {
+        if (this.isCollision) {
+            this.velocity = this.velocity - this.acceleration
+        } else if (this.velocity < this.maxVelocity) {
             this.velocity = this.velocity + this.acceleration;
+        }
+        if (this.velocity < 0) this.velocity = 0;
+
+        if (this.yOffset >= 5) {
+            let newOffset = this.yOffset - this.velocity / 20;
+            if (this.isCollision) {
+                newOffset = this.yOffset + this.velocity / 5;
+                // console.log(this.id, 'collision')
+            }
+            if (newOffset < 5) newOffset = 5;
+            if (newOffset > 100) newOffset = 100;
+
+            this.yOffset = newOffset;
         }
 
         this.progress = this.progress + this.velocity;
@@ -101,10 +108,6 @@ export class Player {
 
         this.rotation = -(180 - rad * (180 / Math.PI));
 
-        // this.position = {
-        //     x: this.trackPoint.x,
-        //     y: this.trackPoint.y,
-        // };
         this.position = {
             x: this.trackPoint.x - ox,
             y: this.trackPoint.y + oy,
@@ -117,7 +120,6 @@ export class Player {
             pos_x = this.position.x - init_x,
             pos_y = this.position.y - init_y;
 
-        // this.sprite.style.transform = `translate(${pos_x}px, ${pos_y}px)`
         this.sprite.style.transform = `translate(${pos_x}px, ${pos_y}px) rotate(${this.rotation}deg)`
     }
 }
@@ -145,17 +147,67 @@ export class Animation {
         const isDone = !this.objects.map(object => object.isDone).includes(false);
 
         if (!isDone) {
-            requestAnimationFrame(() => this.run());
+
+            const objects = [...this.objects];
+            objects.sort(function (a, b) { return a.progress - b.progress });
+            for (let i = 0; i < objects.length - 1; i++) {
+                const a = objects[i];
+                let isCollision = false;
+                // for (let b of objects) {
+                //     if (b.id !== a.id) {
+                const b = objects[i + 1];
+                if (collision(a, b)) {
+                    isCollision = true;
+                    // console.log(a.id, 'collide', b.id);
+                }
+                //     }
+                // }
+
+                a.isCollision = isCollision;
+
+                // if(isCollision) console.log(a.id,'collide with' ,b.id)
+            }
+
             for (let object of this.objects) {
                 object.move();
             }
+
+            requestAnimationFrame(() => this.run());
         } else {
             this.onFinish();
         }
 
     }
 
+    // detectCollision() {
+    //     const objects = [...this.objects];
+    //     objects.sort(function (a, b) { return a.progress - b.progress });
+
+    //     for (let i = 0; i < objects.length - 1; i++) {
+    //         const a = objects[i];
+    //         const b = objects[i + i];
+
+    //         a.isCollision = collision(a, b);
+    //     }
+    // }
+
     onFinish() {
+        const objects = [...this.objects];
+        objects.sort(function (a, b) { return a.progress - b.progress });
+
         console.log('done');
+        console.log(objects);
     }
 };
+
+function collision(a, b) {
+    const dx = a.position.x - b.position.x;
+    const dy = a.position.y - b.position.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < a.collisionRadius + b.collisionRadius) {
+        return true;
+    }
+
+    return false;
+}
