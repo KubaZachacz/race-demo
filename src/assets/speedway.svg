@@ -4,10 +4,25 @@
         <style>.cls-1{fill:#2bb673;}.cls-2{fill:#726658;}.cls-3{fill:#8b5e3c;}.cls-4{fill:#fff;}.cls-5{fill:#bcbec0;}.cls-6{fill:#f1f2f2;}.cls-7{fill:none;}.tire{fill:#231f20;}.motorcycle{fill:#ec008c;}.helmet{fill:#fff200;}
         .player {
             transform-box: fill-box;
-            transform-origin: center;
+            transform-origin: left center;
         }
-        .cls-7 {
-            stroke: pink;
+        .back {
+            transform-box: fill-box;
+            transform-origin: left center;
+            transition: transform 0.2s;
+        }
+        #player {
+            visibility: hidden;
+        }
+        .dust{
+            fill:#3c2415;
+            opacity:0;
+            transition: opacity 0.15s;
+        }
+        .dust-group {
+            transform-box: fill-box;
+            transform-origin: left center;
+            transition: transform 0.15s;
         }
         </style>
     </defs>
@@ -24,11 +39,27 @@
         <path class="cls-7" d="M910.591,228.28388H602.92931c-146.76813,0-265.74719,98.65766-265.74719,220.358S456.16118,669,602.92931,669c.55726,0,1.11287-.00593,1.66935-.00876h611.98476c.55658.00283,1.11218.00876,1.66935.00876C1365.021,669,1484,570.34234,1484,448.64192s-118.979-220.358-265.74724-220.358H910.591"/>
     </g>
     <g id="player" class="player">
-        <g id="back">
+        <g class="back">
+            <g class="dust-group">
+                <circle class="dust" cx="932.1927" cy="442.88195" r="5.14194"/>
+                <circle class="dust" cx="932.74479" cy="455.27692" r="5.14194"/>
+                <circle class="dust" cx="936.47395" cy="448.30514" r="5.14194"/>
+                <circle class="dust" cx="938.9899" cy="443.8169" r="4.30732"/>
+                <circle class="dust" cx="939.90611" cy="453.46699" r="4.30732"/>
+                <circle class="dust" cx="945.04676" cy="448.93323" r="4.30732"/>
+                <circle class="dust" cx="946.03928" cy="443.8169" r="2.74206"/>
+                <circle class="dust" cx="947.41667" cy="453.24055" r="2.74206"/>
+                <circle class="dust" cx="938.3047" cy="437.02397" r="1.09113"/>
+                <circle class="dust" cx="943.58347" cy="439.20623" r="1.09113"/>
+                <circle class="dust" cx="945.04676" cy="458.03957" r="1.09113"/>
+                <circle class="dust" cx="955.58843" cy="447.21401" r="1.09113"/>
+                <circle class="dust" cx="958.1301" cy="450.13498" r="1.09113"/>
+                <circle class="dust" cx="950.87561" cy="448.30514" r="2.74206"/>
+            </g>
             <rect class="tire" x="922.50254" y="440.25274" width="6.88318" height="16.7784" rx="3.44158" ry="3.44158" transform="translate(477.30219 1374.58607) rotate(-90)"/>
             <rect class="motorcycle" x="907.14947" y="433.28887" width="6.88318" height="30.70614" transform="translate(461.94912 1359.233) rotate(-90)"/>
         </g>
-        <g id="front">
+        <g class="front">
             <rect class="tire" x="891.7964" y="440.25274" width="6.88318" height="16.7784" rx="3.44158" ry="3.44158" transform="translate(446.59605 1343.87993) rotate(-90)"/>
             <rect class="motorcycle" x="895.23799" y="437.6736" width="3.44159" height="21.93668"/>
         </g>

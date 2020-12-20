@@ -1,6 +1,9 @@
+import { getRandom, getTime } from './../utils';
+const fps = 60;
 export class Player {
     constructor(id, sprite, track, viewBox) {
         this.id = id;
+        this.name = "";
         this.sprite = sprite;
         this.track = track;
         this.lastTrackPoint = {
@@ -22,16 +25,22 @@ export class Player {
         this.velocity = 0;
         this.maxVelocity = 3;
         this.acceleration = 0.05;
-        this.collisionRadius = 12;
+        this.collisionRadius = 11;
         this.isDone = false;
+        this.isFinish = false;
         this.laps = 0;
         this.progress = 0;
         this.isCollision = false;
+        this.time = 0;
+        this.callback = () => { };
+        this.startTime = null;
     }
 
-    prepare(offset, maxVelocity, acceleration) {
+    prepare(name, offset, maxVelocity, acceleration, callback) {
+        this.name = name;
         this.maxVelocity = maxVelocity;
         this.acceleration = acceleration;
+        this.callback = callback;
 
         const startPos = this.track.getPointAtLength(0);
 
@@ -51,21 +60,33 @@ export class Player {
     }
 
     move() {
+        if (!this.startTime) this.startTime = new Date();
+
+        const minOffset = 5,
+            maxOffset = 120;
+
         if (this.isCollision) {
             this.velocity = this.velocity - this.acceleration
         } else if (this.velocity < this.maxVelocity) {
             this.velocity = this.velocity + this.acceleration;
         }
+
         if (this.velocity < 0) this.velocity = 0;
 
-        if (this.yOffset >= 5) {
-            let newOffset = this.yOffset - this.velocity / 20;
+        if (this.yOffset >= minOffset) {
+            let newOffset = this.yOffset - this.velocity / 15;
+
             if (this.isCollision) {
                 newOffset = this.yOffset + this.velocity / 5;
-                // console.log(this.id, 'collision')
             }
-            if (newOffset < 5) newOffset = 5;
-            if (newOffset > 100) newOffset = 100;
+
+            if (this.rotation > -1 || this.rotation < -179) {
+                const divider = getRandom(30, 50);
+                newOffset = this.yOffset + this.velocity / divider;
+            }
+
+            if (newOffset < minOffset) newOffset = minOffset;
+            if (newOffset > maxOffset) newOffset = maxOffset;
 
             this.yOffset = newOffset;
         }
@@ -78,8 +99,18 @@ export class Player {
             this.laps = this.laps - 1;
         }
 
-        if (this.laps === 0) {
+        if (!this.isFinish && this.laps === 0) {
+            this.isFinish = true;
+            const endTime = new Date();
+            this.time = endTime - this.startTime
+            this.callback(this);
+        }
+
+        if (this.laps === 0 && this.progress > 75) {
             this.isDone = true;
+            this.velocity = 0;
+
+            this.transformPosition();
         }
 
         if (!this.isDone) {
@@ -121,6 +152,27 @@ export class Player {
             pos_y = this.position.y - init_y;
 
         this.sprite.style.transform = `translate(${pos_x}px, ${pos_y}px) rotate(${this.rotation}deg)`
+
+        const back = this.sprite.querySelector('.back');
+        let backRotation = 0;
+        const rotation = Math.abs(this.rotation + 180);
+
+        if (rotation > 1 && rotation < 179) {
+            if (rotation > 20) backRotation = 20;
+            else if (rotation < -20) backRotation = -20;
+            else backRotation = rotation;
+        }
+
+        back.style.transform = `rotate(${-backRotation}deg)`;
+
+        const dust = this.sprite.querySelectorAll('.dust');
+        dust.forEach(el => {
+            el.style.opacity = this.velocity > 0 ? (getRandom(0, 3) / 10) : 0;
+        })
+
+        // const dustGroup = this.sprite.querySelector('.dust-group');
+        // dustGroup.style.transform = `scale(${getRandom(10, 30) / 10})`
+
     }
 }
 
@@ -136,7 +188,10 @@ export class Animation {
             object.isDone = false;
         }
 
-        requestAnimationFrame(() => this.run());
+        setTimeout(() => {
+            requestAnimationFrame(() => this.run());
+            // this.run();
+        }, 1000 / fps);
     }
 
     stop() {
@@ -172,7 +227,10 @@ export class Animation {
                 object.move();
             }
 
-            requestAnimationFrame(() => this.run());
+
+            setTimeout(() => {
+                requestAnimationFrame(() => this.run());
+            }, 1000 / fps);
         } else {
             this.onFinish();
         }
@@ -196,7 +254,7 @@ export class Animation {
         objects.sort(function (a, b) { return a.progress - b.progress });
 
         console.log('done');
-        console.log(objects);
+        // console.log(objects);
     }
 };
 
