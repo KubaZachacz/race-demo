@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/race-demo/static/css/main.c30d95c7.chunk.css",
+    "main.js": "/race-demo/static/js/main.bcce8cba.chunk.js",
+    "main.js.map": "/race-demo/static/js/main.bcce8cba.chunk.js.map",
+    "runtime-main.js": "/race-demo/static/js/runtime-main.d94652f7.js",
+    "runtime-main.js.map": "/race-demo/static/js/runtime-main.d94652f7.js.map",
+    "static/js/2.1287736f.chunk.js": "/race-demo/static/js/2.1287736f.chunk.js",
+    "static/js/2.1287736f.chunk.js.map": "/race-demo/static/js/2.1287736f.chunk.js.map",
+    "static/js/3.a21fbbf5.chunk.js": "/race-demo/static/js/3.a21fbbf5.chunk.js",
+    "static/js/3.a21fbbf5.chunk.js.map": "/race-demo/static/js/3.a21fbbf5.chunk.js.map",
+    "index.html": "/race-demo/index.html",
+    "static/css/main.c30d95c7.chunk.css.map": "/race-demo/static/css/main.c30d95c7.chunk.css.map",
+    "static/js/2.1287736f.chunk.js.LICENSE.txt": "/race-demo/static/js/2.1287736f.chunk.js.LICENSE.txt",
+    "static/media/speedway.dfa8e7b3.svg": "/race-demo/static/media/speedway.dfa8e7b3.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.d94652f7.js",
+    "static/js/2.1287736f.chunk.js",
+    "static/css/main.c30d95c7.chunk.css",
+    "static/js/main.bcce8cba.chunk.js"
+  ]
+}
