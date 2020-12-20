@@ -172,7 +172,7 @@ function App() {
           {isFinish ? (
             <button className="start-btn" onClick={handleRestart}>Restart</button>
           ) : (
-              <button disabled={players.length < 1 && isStared} className="start-btn" onClick={handleStart}>Start</button>
+              <button disabled={players.length < 1 || isStared} className="start-btn" onClick={handleStart}>Start</button>
             )}
           <div className="results">
             {results.map(({ id, name, time }) => (

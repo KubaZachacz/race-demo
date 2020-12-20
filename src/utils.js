@@ -18,9 +18,10 @@ export const colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6'
 
 export const getTime = (milli) => {
 	let time = new Date(milli);
-	let hours = time.getUTCHours();
+	// let hours = time.getUTCHours();
 	let minutes = time.getUTCMinutes();
 	let seconds = time.getUTCSeconds();
+	if (seconds < 10) seconds = "0" + seconds;
 	let milliseconds = time.getUTCMilliseconds();
 	return minutes + ":" + seconds + ":" + milliseconds;
 }

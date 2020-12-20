@@ -1,5 +1,20 @@
 import { getRandom, getTime } from './../utils';
+var requestAnimationFrame = window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame;
+
+var sBrowser, sUsrAg = navigator.userAgent;
+
+if (sUsrAg.indexOf("Firefox") > -1) {
+    sBrowser = "FF";
+    // "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0"
+}
+
 const fps = 60;
+
+const history = [];
 export class Player {
     constructor(id, sprite, track, viewBox) {
         this.id = id;
@@ -54,6 +69,17 @@ export class Player {
         this.yOffset = offset.y;
         this.xOffset = offset.x;
 
+        if (sBrowser == 'FF') {
+            const helmet = this.sprite.querySelector('.helmet');
+            const back = this.sprite.querySelector('.back');
+
+            back.style.transformBox = 'initial';
+            this.helmet = {
+                x: helmet.getAttribute('cx'),
+                y: helmet.getAttribute('cy'),
+            }
+        }
+
         this.calculatePosition(Math.PI);
 
         this.transformPosition();
@@ -62,7 +88,7 @@ export class Player {
     move() {
         if (!this.startTime) this.startTime = new Date();
 
-        const minOffset = 5,
+        const minOffset = 2.5,
             maxOffset = 120;
 
         if (this.isCollision) {
@@ -71,17 +97,18 @@ export class Player {
             this.velocity = this.velocity + this.acceleration;
         }
 
-        if (this.velocity < 0) this.velocity = 0;
+        if (this.velocity < 0) this.velocity = this.acceleration;
 
         if (this.yOffset >= minOffset) {
             let newOffset = this.yOffset - this.velocity / 15;
 
             if (this.isCollision) {
                 newOffset = this.yOffset + this.velocity / 5;
-            }
 
-            if (this.rotation > -1 || this.rotation < -179) {
-                const divider = getRandom(30, 50);
+                if (newOffset > maxOffset) newOffset = this.yOffset - this.velocity / 5;
+            }
+            else if (this.rotation > -1 || this.rotation < -179) {
+                const divider = getRandom(35, 55);
                 newOffset = this.yOffset + this.velocity / divider;
             }
 
@@ -153,6 +180,7 @@ export class Player {
 
         this.sprite.style.transform = `translate(${pos_x}px, ${pos_y}px) rotate(${this.rotation}deg)`
 
+
         const back = this.sprite.querySelector('.back');
         let backRotation = 0;
         const rotation = Math.abs(this.rotation + 180);
@@ -163,16 +191,19 @@ export class Player {
             else backRotation = rotation;
         }
 
+        if (sBrowser == 'FF') {
+           
+            back.style.transformBox = 'initial';
+
+            back.style.transformOrigin = `${this.helmet.x}px ${this.helmet.y}px`;
+        }
+
         back.style.transform = `rotate(${-backRotation}deg)`;
 
         const dust = this.sprite.querySelectorAll('.dust');
         dust.forEach(el => {
             el.style.opacity = this.velocity > 0 ? (getRandom(0, 3) / 10) : 0;
         })
-
-        // const dustGroup = this.sprite.querySelector('.dust-group');
-        // dustGroup.style.transform = `scale(${getRandom(10, 30) / 10})`
-
     }
 }
 

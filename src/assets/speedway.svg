@@ -19,11 +19,7 @@
             opacity:0;
             transition: opacity 0.15s;
         }
-        .dust-group {
-            transform-box: fill-box;
-            transform-origin: left center;
-            transition: transform 0.15s;
-        }
+
         </style>
     </defs>
     <title>speedway</title>
